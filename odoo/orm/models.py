@@ -5442,8 +5442,7 @@ class BaseModel(metaclass=MetaModel):
     @api.private
     def mapped[T](self, func: str | Callable[[Self], T]) -> list | BaseModel:
         """Apply ``func`` on all records in ``self``, and return the result as a
-        list or a recordset (if ``func`` return recordsets). In the latter
-        case, the order of the returned recordset is arbitrary.
+        list or a recordset (if ``func`` is a relational path str).
 
         :param func: a function or a dot-separated sequence of field names
         :return: self if func is falsy, result of func applied to all ``self`` records.
@@ -5486,16 +5485,7 @@ class BaseModel(metaclass=MetaModel):
                 return getter(records)
             return [getter(record) for record in records]
 
-        if self:
-            vals = [func(rec) for rec in self]
-            if isinstance(vals[0], BaseModel):
-                return vals[0].union(*vals)
-            return vals
-        else:
-            # we want to follow-up the comodel from the function
-            # so we pass an empty recordset
-            vals = func(self)
-            return vals if isinstance(vals, BaseModel) else []
+        return [func(rec) for rec in self]
 
     @api.private
     def filtered(self, func: str | Callable[[Self], bool] | Domain) -> Self:

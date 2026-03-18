@@ -2782,6 +2782,7 @@ class AccountMoveLine(models.Model):
             raise UserError(_("You are trying to reconcile some entries that are already reconciled."))
         if any(aml.parent_state == 'cancel' for aml in self):
             raise UserError(_("You can not reconcile cancelled entries."))
+        # HERE
         accounts = self.mapped(lambda x: x._get_reconciliation_aml_field_value('account_id', shadowed_aml_values))
         if len(accounts) > 1:
             raise UserError(_(
@@ -2839,6 +2840,7 @@ class AccountMoveLine(models.Model):
                     aml._get_reconciliation_aml_field_value('amount_currency', shadowed_aml_values),
                     aml._get_reconciliation_aml_field_value('balance', shadowed_aml_values),
                 ))
+            # HERE
             currencies = sorted_amls.mapped(lambda x: x._get_reconciliation_aml_field_value('currency_id', shadowed_aml_values))
             results = {
                 'amls': sorted_amls,

@@ -87,7 +87,7 @@ class StockLot(models.Model):
         for lot in self:
             if delivery_ids_by_lot.get(lot.id, []):
                 picking_ids = self.env['stock.picking'].browse(delivery_ids_by_lot[lot.id]).with_prefetch(all_picking_ids).sorted(key='date_done', reverse=True)
-                lot.partner_ids = picking_ids.mapped(lambda p: p.sale_id.partner_shipping_id if p.is_dropship and p.sale_id.partner_shipping_id else p.partner_id)
+                lot.partner_ids = picking_ids.mapped(lambda p: p.sale_id.partner_shipping_id.id if p.is_dropship and p.sale_id.partner_shipping_id else p.partner_id.id)
             else:
                 lot.partner_ids = False
 
